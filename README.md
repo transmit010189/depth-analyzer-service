@@ -79,97 +79,96 @@ export MODEL_BUCKET="your-gcs-bucket-name"
 5.啟動服務：
 uvicorn main_web:app --host 0.0.0.0 --port 8000
 
-使用方式：
+6.使用方式：
 
-開啟瀏覽器造訪：
-http://localhost:8000/
-上傳一張箱尺 / 管線挖掘照片即可看到分析結果與詳細日誌。
+ 開啟瀏覽器造訪：
+ http://localhost:8000/
+ 上傳一張箱尺 / 管線挖掘照片即可看到分析結果與詳細日誌。
 
-以 JSON API 呼叫：
-curl -X POST "http://localhost:8000/analyze-depth" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@your_image.jpg"
+ 以 JSON API 呼叫：
+ curl -X POST "http://localhost:8000/analyze-depth" \
+   -H "Content-Type: multipart/form-data" \
+   -F "file=@your_image.jpg"
 
-API 端點概觀
-GET /
+ API 端點概觀
+ GET /
 
-類型：HTML
+ 類型：HTML
 
-內容：上傳圖片的表單頁與分析結果圖 / 日誌。
+ 內容：上傳圖片的表單頁與分析結果圖 / 日誌。
 
-POST /analyze-depth 及 /analyze-depth/
+ POST /analyze-depth 及 /analyze-depth/
 
-類型：multipart/form-data
+ 類型：multipart/form-data
 
-參數：
+ 參數：
 
-file：要分析的圖片檔案。
+ file：要分析的圖片檔案。
 
-回傳：application/json，內容包含：
+ 回傳：application/json，內容包含：
 
-基本資訊：檔名、推論時間等
+ 基本資訊：檔名、推論時間等
 
-偵測結果：箱尺位置、顏色判斷
+ 偵測結果：箱尺位置、顏色判斷
 
-埋深判讀：原始讀值、校正後深度
+ 埋深判讀：原始讀值、校正後深度
 
-raw_gemini_output：Gemini 的原始文字輸出
+ raw_gemini_output：Gemini 的原始文字輸出
 
-gemini_log_details：分析過程日誌（方便除錯）
+ gemini_log_details：分析過程日誌（方便除錯）
 
-POST /analyze-depth-form/
+ POST /analyze-depth-form/
 
-類型：HTML（表單送出）
+ 類型：HTML（表單送出）
 
-與 / 搭配使用，主要給使用者在網頁介面操作。
+ 與 / 搭配使用，主要給使用者在網頁介面操作。
 
-更完整的 Request / Response 定義可參考 openapi-spec.yaml。
+ 更完整的 Request / Response 定義可參考 openapi-spec.yaml。
 
-部署到 Cloud Run（簡略說明）
+ 部署到 Cloud Run（簡略說明）
 
-建立 Docker 映像或使用 Cloud Run 直接從原始碼部署。
+ 建立 Docker 映像或使用 Cloud Run 直接從原始碼部署。
 
-在 Cloud Run 服務中設定與本機相同的環境變數：
+ 在 Cloud Run 服務中設定與本機相同的環境變數：
 
-GEMINI_API_KEY
+ GEMINI_API_KEY
 
-MODEL_PATH_ENV
+ MODEL_PATH_ENV
 
-SEG_MODEL_PATH_ENV
+ SEG_MODEL_PATH_ENV
 
-（選用）MODEL_BUCKET
+ （選用）MODEL_BUCKET
 
-若搭配 API Gateway，可將 openapi-spec.yaml 匯入，將外部 URL 代理到 Cloud Run 服務。
+ 若搭配 API Gateway，可將 openapi-spec.yaml 匯入，將外部 URL 代理到 Cloud Run 服務。
 
-實際部署步驟可依各自環境調整。
+ 實際部署步驟可依各自環境調整。
 
-安全性與機密資料
+ 安全性與機密資料
 
-本專案程式碼 不包含任何真實 API Key 或 GCP 憑證。
+ 本專案程式碼 不包含任何真實 API Key 或 GCP 憑證。
 
-請務必透過環境變數或 Secret Manager 管理：
+ 請務必透過環境變數或 Secret Manager 管理：
 
-GEMINI_API_KEY
+ GEMINI_API_KEY
 
-任何 GCP service account JSON 等敏感資訊。
+ 任何 GCP service account JSON 等敏感資訊。
 
-請勿將 .env、金鑰檔、實際工地影像資料 commit 到公開 repo。
 
-授權 / License
+ 授權 / License
 
-本專案程式碼以 AGPL-3.0 授權釋出，詳細條款請參閱本庫中的 LICENSE 檔案。
+ 本專案程式碼以 AGPL-3.0 授權釋出，詳細條款請參閱本庫中的 LICENSE 檔案。
 
-本專案使用：
+ 本專案使用：
 
-Ultralytics YOLO11 模型與程式庫
+ Ultralytics YOLO11 模型與程式庫
 
-其他開源套件（FastAPI、OpenCV、NumPy、google-generativeai 等）
+ 其他開源套件（FastAPI、OpenCV、NumPy、google-generativeai 等）
 
-上述第三方軟體皆依各自授權條款使用，相關著作權與商標權屬原權利人所有。
+ 上述第三方軟體皆依各自授權條款使用，相關著作權與商標權屬原權利人所有。
 
-聯絡方式
+ 聯絡方式
 
-如有錯誤回報、功能建議或協助需求，歡迎於 GitHub Issues 建立問題。
+ 如有錯誤回報、功能建議或協助需求，歡迎於 GitHub Issues 建立問題。
 
-Repository：
-https://github.com/transmit010189/depth-analyzer-service
+ Repository：
+ https://github.com/transmit010189/depth-analyzer-service
