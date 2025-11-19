@@ -1,0 +1,20 @@
+# requirements.txt (Cloud Run with GPU Version - Final)
+
+# --- 指定 PyTorch GPU (CUDA 12.1) 版本 ---
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# --- 核心框架與伺服器 ---
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart
+jinja2
+
+# --- 圖像與 AI 處理 ---
+Pillow
+opencv-python-headless
+ultralytics
+google-generativeai
+numpy
+
+# --- 雲端整合 ---
+google-cloud-storage
