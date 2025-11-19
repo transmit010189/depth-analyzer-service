@@ -3,7 +3,7 @@
 道路挖掘工程用的 **箱尺埋深檢測服務**。  
 使用 Ultralytics YOLO (YOLO11) 與 segmentation 模型辨識箱尺位置與顏色，並搭配 Google Gemini 讀取刻度，提供管線埋深與黃/白線 ±1 公尺校正資訊。
 
-本專案是以 FastAPI 建立的雲端服務，可部署於 Cloud Run，供「道路挖掘管理系統」或其他系統透過 API 呼叫使用。
+本專案是以 FastAPI 建立的雲端服務，可部署於 Cloud Run，供系統透過 API 呼叫使用。
 
 ---
 
