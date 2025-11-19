@@ -1,0 +1,144 @@
+swagger: "2.0"
+
+info:
+  title: "箱尺埋深檢測 API (Depth Analyzer API)"
+  description: "提供管線埋深影像分析服務，支援 YOLO 目標檢測與 Gemini AI 分析"
+  version: "3.0.0"
+  contact:
+    name: "API Support"
+
+# 主機設定（由 Google Cloud API Gateway 自動處理）
+host: "SET_BY_GATEWAY"
+schemes:
+  - "https"
+
+# 全域認證設定：所有 API 都需要 API Key
+security:
+  - api_key: []
+
+# API 端點定義
+paths:
+  # 核心分析 API（純 JSON 回應）
+  /analyze-depth:
+    post:
+      summary: "分析管線埋深圖片"
+      description: "上傳管線挖掘圖片，返回埋深分析結果（JSON 格式）"
+      operationId: "analyzeDepth"
+      consumes:
+        - "multipart/form-data"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "file"
+          in: "formData"
+          description: "要分析的管線埋深圖片（JPG/PNG，最大 10MB）"
+          required: true
+          type: "file"
+      responses:
+        "200":
+          description: "分析成功"
+          schema:
+            type: "object"
+            properties:
+              filename:
+                type: "string"
+                description: "上傳的檔案名稱"
+              placement_status:
+                type: "string"
+                description: "埋深狀態判定（合格/不合格/無法判定）"
+              depth_value_meters:
+                type: "number"
+                description: "埋深數值（公尺）"
+              raw_gemini_output:
+                type: "string"
+                description: "Gemini AI 原始輸出"
+              error_message:
+                type: "string"
+                description: "錯誤訊息（如有）"
+        "400":
+          description: "請求錯誤（檔案格式不正確）"
+        "413":
+          description: "檔案過大（超過 10MB）"
+        "500":
+          description: "伺服器內部錯誤"
+        "503":
+          description: "服務暫時無法使用"
+      security:
+        - api_key: []
+      # 後端服務設定（指向您的 Cloud Run）
+      x-google-backend:
+        address: "https://depth-analyzer-service-674587913731.asia-southeast1.run.app"
+        protocol: "h2"
+        path_translation: "APPEND_PATH_TO_ADDRESS"
+
+  # 網頁表單 API（返回 HTML）
+  /analyze-depth-form/:
+    post:
+      summary: "分析管線埋深圖片（網頁表單）"
+      description: "上傳管線挖掘圖片，返回包含詳細日誌和圖片的網頁結果"
+      operationId: "analyzeDepthForm"
+      consumes:
+        - "multipart/form-data"
+      produces:
+        - "text/html"
+      parameters:
+        - name: "file"
+          in: "formData"
+          description: "要分析的管線埋深圖片"
+          required: true
+          type: "file"
+      responses:
+        "200":
+          description: "分析完成（包含詳細結果頁面）"
+        "400":
+          description: "請求錯誤"
+        "500":
+          description: "伺服器內部錯誤"
+      security:
+        - api_key: []
+      x-google-backend:
+        address: "https://depth-analyzer-service-674587913731.asia-southeast1.run.app"
+        protocol: "h2"
+        path_translation: "APPEND_PATH_TO_ADDRESS"
+
+  # 首頁（可選：是否需要認證可自行決定）
+  /:
+    get:
+      summary: "服務首頁"
+      description: "顯示服務資訊和上傳表單"
+      operationId: "getHomePage"
+      produces:
+        - "text/html"
+      responses:
+        "200":
+          description: "首頁載入成功"
+      # 首頁可以不需要 API Key（如果希望公開）
+      # 如果要保護首頁，取消以下註解：
+      # security:
+      #   - api_key: []
+      x-google-backend:
+        address: "https://depth-analyzer-service-674587913731.asia-southeast1.run.app"
+        protocol: "h2"
+        path_translation: "APPEND_PATH_TO_ADDRESS"
+
+# API Key 認證定義
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"  # API Key 放在 URL query parameter: ?key=YOUR_API_KEY
+
+# 額外的 Google Cloud 特定設定
+x-google-management:
+  metrics:
+    - name: "depth-analysis-requests"
+      valueType: INT64
+      metricKind: DELTA
+  quota:
+    limits:
+      - name: "depth-analysis-limit"
+        metric: "depth-analysis-requests"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 100  # 每個專案每分鐘最多 100 次請求（可調整）
+
